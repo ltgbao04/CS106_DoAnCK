@@ -194,14 +194,7 @@ class Agent:
         )
 
 
-def run(train=True,model_name="model",epochs=50,steps=500,ard=False):
-    if ard:
-        arduino = serial.Serial(port="/dev/cu.usbmodem101", baudrate=9600, timeout=.1)
-        def write_read(x):
-            arduino.write(bytes(x, 'utf-8'))
-            time.sleep(0.05)
-            data = arduino.readline()
-            return data
+def run(train=True,model_name="model",epochs=50,steps=500):
     """execute the TraCI control loop"""
     epochs = epochs
     steps = steps
@@ -303,18 +296,6 @@ def run(train=True,model_name="model",epochs=50,steps=500,ard=False):
                     phaseDuration(junction, 6, select_lane[lane][0])
                     phaseDuration(junction, min_duration + 10, select_lane[lane][1])
 
-                    if ard:
-                        ph = str(traci.trafficlight.getRedYellowGreenState("gneJ2"))
-                        if ph=="GGGrrrrrrrrr":
-                            ph=0
-                        elif ph=="rrrGGGrrrrrr":
-                            ph=2
-                        elif ph=="rrrrrrGGGrrr":
-                            ph=4
-                        elif ph=="rrrrrrrrrGGG":
-                            ph=6
-                        value = write_read(str(ph))
-
                     traffic_lights_time[junction] = min_duration + 10
                     if train:
                         brain.learn(junction_number)
@@ -390,12 +371,6 @@ def get_options():
         default=500,
         help="Number of steps",
     )
-    optParser.add_option(
-       "--ard",
-        action='store_true',
-        default=False,
-        help="Connect Arduino", 
-    )
     options, args = optParser.parse_args()
     return options
 
@@ -407,5 +382,4 @@ if __name__ == "__main__":
     train = options.train
     epochs = options.epochs
     steps = options.steps
-    ard = options.ard
-    run(train=train,model_name=model_name,epochs=epochs,steps=steps,ard=ard)
+    run(train=train,model_name=model_name,epochs=epochs,steps=steps)

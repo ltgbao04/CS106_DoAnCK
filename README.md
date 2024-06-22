@@ -23,4 +23,4 @@ python train.py -m model_name -s 2000
 - **train**: enable training process if set to *True* otherwise testing mode is enabled (default is False).  
 - **e**: the number of epoch for training process (default is 50).
 - **m**: name the new model if train or else indicate the model to test.
-- **s**: the numbers of steps in simulation.
+- **s**: the number of steps in simulation.
